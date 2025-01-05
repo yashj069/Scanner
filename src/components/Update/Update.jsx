@@ -3,6 +3,7 @@ import Navbar from '../Navbar/Navbar';
 
 const Update = () => {
   const [data, setData] = useState([]);
+  const [originalData, setOriginalData] = useState([]);
   const [errorMsg, setErrorMsg] = useState('');
 
   const getProducts = () => {
@@ -11,8 +12,8 @@ const Update = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data.body);
         setData(data.body);
+        setOriginalData(data.body);
       })
       .catch(() => {
         setErrorMsg('Wrong email or password');
@@ -72,7 +73,15 @@ const Update = () => {
   const handleProductNameChange = (productIdx, newProductName) => {
     setData((prevData) =>
       prevData.map((item, idx) =>
-        idx === productIdx ? { ...item, productName: newProductName } : item
+        idx === productIdx
+          ? {
+              ...item,
+              productName:
+                newProductName === ''
+                  ? originalData[productIdx].productName
+                  : newProductName,
+            }
+          : item
       )
     );
   };
@@ -220,6 +229,9 @@ const Update = () => {
                     type="button"
                     class="btn btn-success"
                     onClick={() => handleUpdateProductData(item.productId, idx)}
+                    disabled={
+                      JSON.stringify(originalData[idx]) === JSON.stringify(item)
+                    }
                   >
                     Save
                   </button>

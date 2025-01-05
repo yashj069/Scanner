@@ -21,16 +21,6 @@ const Home = () => {
     setImage(file);
   };
 
-  const handleReset = (e) => {
-    e.preventDefault();
-    setName('');
-    setImage(null);
-    setVideo(null);
-    setShowDownload(false);
-    setErrorMsg('');
-    setQrImage('');
-  };
-
   const handleGenerate = (e) => {
     e.preventDefault();
     const postData = new FormData();
@@ -137,7 +127,7 @@ const Home = () => {
         ) : (
           <button
             type="button"
-            class="btn btn-primary mt-4"
+            class="btn btn-primary mt-4 mb-2"
             onClick={handleGenerate}
             disabled={!image && !video && !name}
           >
@@ -145,7 +135,11 @@ const Home = () => {
           </button>
         )}
         {showDownload && (
-          <button type="button" class="btn btn-success" onClick={handleReset}>
+          <button
+            type="button"
+            class="btn btn-success"
+            onClick={() => window.location.reload()}
+          >
             Create new
           </button>
         )}
