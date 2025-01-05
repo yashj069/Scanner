@@ -25,13 +25,15 @@ const ProductPage = () => {
 
   const handleImageClick = () => {
     if (productData && productData.productImage) {
-      window.open(productData.productImage, '_blank');
+      //   const objectUrl = URL.createObjectURL(productData.productImage); // Create an object URL for the file
+      window.open(productData.productImage, '_self'); // Open the object URL in a new tab
+      // ); // Revoke the URL after it's opened (optional cleanup)
     }
   };
 
   const handleVideoClick = () => {
     if (productData && productData.productVideo) {
-      window.open(productData.productVideo, '_blank');
+      window.open(productData.productVideo, '_self');
     }
   };
 

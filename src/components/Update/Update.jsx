@@ -235,27 +235,7 @@ const Update = () => {
   return (
     <div>
       <Navbar />
-      {/* <div class="row g-3 align-items-center mr-8">
-        <div class="col-auto">
-          <label class="col-form-label">Product Name</label>
-        </div>
-        <div class="col-auto" style={{ width: '300px' }}>
-          <input
-            type="text"
-            class="form-control"
-            //   onChange={(e) => setName(e.target.value)}
-          />
-        </div>
-      </div> */}
       {renderData()}
-      {/* {data?.length === 0 ? (
-        <h1>No result found</h1>
-      ) : (
-        renderData
-        // data.map((item, idx) => {
-        //   return <div key={idx}>{item.productName}</div>;
-        // })
-      )} */}
     </div>
   );
 };

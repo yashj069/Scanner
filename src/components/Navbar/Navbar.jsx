@@ -1,35 +1,32 @@
 import React from 'react';
+import { useMediaQuery } from 'react-responsive';
 
 const Navbar = () => {
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1000px)' });
   return (
     <div>
       <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
+        <div id="navbarSupportedContent">
+          <ul
+            class="navbar-nav me-auto mb-2 mb-lg-0"
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              gap: isTabletOrMobile ? '20px' : '10px',
+              paddingLeft: '20px',
+            }}
           >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="/home">
-                  Create
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/update">
-                  Update
-                </a>
-              </li>
-            </ul>
-          </div>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/home">
+                Create
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/update">
+                Update
+              </a>
+            </li>
+          </ul>
         </div>
       </nav>
     </div>

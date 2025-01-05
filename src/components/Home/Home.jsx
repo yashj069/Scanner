@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from '../Navbar/Navbar';
+import { useMediaQuery } from 'react-responsive';
 
 const Home = () => {
   const [name, setName] = useState('');
@@ -9,8 +10,10 @@ const Home = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [qrImage, setQrImage] = useState('');
 
+  const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1000px)' });
+
   const handleDownload = () => {
-    window.open('', '_self');
+    if (qrImage) window.open(qrImage, '_blank');
   };
 
   const handleImageChange = (event) => {
@@ -59,7 +62,10 @@ const Home = () => {
           <div class="col-auto">
             <label class="col-form-label">Product Name</label>
           </div>
-          <div class="col-auto" style={{ width: '300px' }}>
+          <div
+            class="col-auto"
+            style={{ width: isTabletOrMobile ? '200px' : '300px' }}
+          >
             <input
               type="text"
               class="form-control"
@@ -68,7 +74,10 @@ const Home = () => {
           </div>
         </div>
 
-        <div class="input-group mb-3" style={{ width: '400px' }}>
+        <div
+          class="input-group mb-3"
+          style={{ width: isTabletOrMobile ? '200px' : '400px' }}
+        >
           <button
             class="btn btn-outline-secondary"
             type="button"
@@ -78,15 +87,18 @@ const Home = () => {
           </button>
           <input
             type="file"
-            class="form-control"
-            id="inputGroupFile03"
+            class="form-control form-control-sm"
+            id="formFileSm"
             aria-describedby="inputGroupFileAddon03"
             aria-label="Upload"
             onChange={handleImageChange}
           />
         </div>
 
-        <div class="input-group mb-3" style={{ width: '400px' }}>
+        <div
+          class="input-group mb-3"
+          style={{ width: isTabletOrMobile ? '200px' : '400px' }}
+        >
           <button
             class="btn btn-outline-secondary"
             type="button"
@@ -96,8 +108,8 @@ const Home = () => {
           </button>
           <input
             type="file"
-            class="form-control"
-            id="inputGroupFile03"
+            class="form-control form-control-sm"
+            id="formFileSm"
             aria-describedby="inputGroupFileAddon03"
             aria-label="Upload"
             onChange={(e) => setVideo(e.target.value)}
