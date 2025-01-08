@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../Navbar/Navbar';
 import { useMediaQuery } from 'react-responsive';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const [name, setName] = useState('');
@@ -9,16 +10,24 @@ const Home = () => {
   const [showDownload, setShowDownload] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [qrImage, setQrImage] = useState('');
+  const navigate = useNavigate();
 
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1000px)' });
 
-  const handleDownload = () => {
-    if (qrImage) window.open(qrImage, '_blank');
-  };
+  useEffect(() => {
+    if (navigate) {
+      const isAuth = sessionStorage.getItem('auth');
+      if (!isAuth) navigate('/');
+    }
+  }, [navigate]);
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     setImage(file);
+  };
+  const handleVideoChange = (event) => {
+    const file = event.target.files[0];
+    setVideo(file);
   };
 
   const handleGenerate = (e) => {
@@ -28,7 +37,7 @@ const Home = () => {
     image && postData.append('image', image);
     video && postData.append('video', video);
 
-    fetch('https://guddi-garments.vercel.app/api/product/create', {
+    fetch(`https://guddi-garments.onrender.com/api/product/create`, {
       method: 'POST',
       body: postData,
     })
@@ -44,65 +53,96 @@ const Home = () => {
       });
   };
 
+  const handleDownloadImage = (imageUrl, filename) => {
+    fetch(imageUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.blob();
+      })
+      .then((blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      })
+      .catch((error) => console.error('Error downloading the image:', error));
+  };
+
   return (
     <div>
       <Navbar />
-      <div className="App-header">
-        <div class="row g-3 align-items-center mr-8">
-          <div class="col-auto">
-            <label class="col-form-label">Product Name</label>
-          </div>
-          <div
-            class="col-auto"
-            style={{ width: isTabletOrMobile ? '200px' : '300px' }}
-          >
-            <input
-              type="text"
-              class="form-control"
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-        </div>
-
+      <div
+        className="App-header"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
         <div
-          class="input-group mb-3"
-          style={{ width: isTabletOrMobile ? '200px' : '400px' }}
+          class="mb-2"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            alignItems: 'flex-start',
+            width: '358px',
+          }}
         >
-          <button
-            class="btn btn-outline-secondary"
-            type="button"
-            id="inputGroupFileAddon03"
-          >
-            Upload image
-          </button>
+          <label for="exampleFormControlInput1" class="form-label">
+            Product Name
+          </label>
           <input
+            type="email"
+            class="form-control"
+            id="exampleFormControlInput1"
+            placeholder="Product Name"
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+        <div
+          class="mb-2"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            alignItems: 'flex-start',
+          }}
+        >
+          <label for="formFile" class="form-label">
+            Upload Image
+          </label>
+          <input
+            class="form-control"
             type="file"
-            class="form-control form-control-sm"
-            id="formFileSm"
-            aria-describedby="inputGroupFileAddon03"
-            aria-label="Upload"
+            id="formFile"
             onChange={handleImageChange}
           />
         </div>
 
         <div
-          class="input-group mb-3"
-          style={{ width: isTabletOrMobile ? '200px' : '400px' }}
+          class="mb-2"
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            alignItems: 'flex-start',
+          }}
         >
-          <button
-            class="btn btn-outline-secondary"
-            type="button"
-            id="inputGroupFileAddon03"
-          >
+          <label for="formFile" class="form-label">
             Upload video
-          </button>
+          </label>
           <input
+            class="form-control"
             type="file"
-            class="form-control form-control-sm"
-            id="formFileSm"
-            aria-describedby="inputGroupFileAddon03"
-            aria-label="Upload"
-            onChange={(e) => setVideo(e.target.value)}
+            id="formFile"
+            onChange={handleVideoChange}
           />
         </div>
 
@@ -111,8 +151,9 @@ const Home = () => {
             src={qrImage}
             class="img-thumbnail"
             alt="QR"
-            height="200px"
-            width="200px"
+            height={isTabletOrMobile ? '100px' : '200px'}
+            width={isTabletOrMobile ? '100px' : '200px'}
+            download="desired-filename.jpg"
           />
         )}
 
@@ -120,7 +161,8 @@ const Home = () => {
           <button
             type="button"
             class="btn btn-success"
-            onClick={handleDownload}
+            style={{ marginTop: '4px' }}
+            onClick={() => handleDownloadImage(qrImage, 'NEW FILE')}
           >
             Download QR
           </button>
@@ -138,6 +180,7 @@ const Home = () => {
           <button
             type="button"
             class="btn btn-success"
+            style={{ marginTop: '4px' }}
             onClick={() => window.location.reload()}
           >
             Create new

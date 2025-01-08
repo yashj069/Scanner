@@ -12,11 +12,16 @@ const Login = () => {
     const postData = new FormData();
     postData.append('email', email);
     postData.append('password', password);
-    fetch('https://guddi-garments.vercel.app/api/auth/login', {
+    fetch(`https://guddi-garments.onrender.com/api/auth/login`, {
       method: 'POST',
       body: postData,
     })
-      .then((res) => (res.status === 200 ? navigate('/home') : res.json()))
+      .then((res) => {
+        if (res.status === 200) {
+          sessionStorage.setItem('auth', true);
+          navigate('/home');
+        } else res.json();
+      })
       .then((data) => {
         setErrorMsg(data.message);
       })

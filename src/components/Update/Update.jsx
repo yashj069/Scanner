@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../Navbar/Navbar';
+import { useNavigate } from 'react-router-dom';
 
 const Update = () => {
   const [data, setData] = useState([]);
   const [originalData, setOriginalData] = useState([]);
   const [errorMsg, setErrorMsg] = useState('');
 
+  const navigate = useNavigate();
+
   const getProducts = () => {
-    fetch('https://guddi-garments.vercel.app/api/product/', {
+    fetch(`https://guddi-garments.onrender.com/api/product/`, {
       method: 'GET',
     })
       .then((res) => res.json())
@@ -21,8 +24,12 @@ const Update = () => {
   };
 
   useEffect(() => {
-    getProducts();
-  }, []);
+    if (navigate) {
+      const isAuth = sessionStorage.getItem('auth');
+      if (!isAuth) navigate('/');
+      getProducts();
+    }
+  }, [navigate]);
 
   const renderToast = () => {
     return (
@@ -52,10 +59,13 @@ const Update = () => {
     postData.append('video', data[productIdx].productVideo);
     postData.append('isEnabled', data[productIdx].isEnabled);
 
-    fetch(`https://guddi-garments.vercel.app/api/product/update/${productId}`, {
-      method: 'POST',
-      body: postData,
-    })
+    fetch(
+      `https://guddi-garments.onrender.com/api/product/update/${productId}`,
+      {
+        method: 'POST',
+        body: postData,
+      }
+    )
       .then(() => renderToast())
       .catch(() => {
         setErrorMsg('Failed to delete product');

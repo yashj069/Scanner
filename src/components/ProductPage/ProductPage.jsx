@@ -5,17 +5,30 @@ const ProductPage = () => {
   const { productId } = useParams();
   const [errorMsg, setErrorMsg] = useState(null);
   const [productData, setProductData] = useState(null);
+  const [localImage, setLocalImage] = useState(null);
+  const [isImageClicked, setIsImageClicked] = useState(null);
+  const [isVideoClicked, setIsVideoClicked] = useState(null);
 
   useEffect(() => {
     if (productId) {
-      fetch(`https://guddi-garments.vercel.app/api/product/${productId}`, {
+      fetch(`https://guddi-garments.onrender.com/api/product/${productId}`, {
         method: 'GET',
       })
         .then((res) => res.json())
-        .then((data) => {
+        .then(async (data) => {
           if (data.message) {
             setErrorMsg('Product details not available!');
-          } else setProductData(data.body);
+          } else {
+            const response = await fetch(data.body.productImage);
+            const blob = await response.blob();
+            // Convert Blob to Base64
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              setLocalImage(reader.result); // Base64 string
+            };
+            reader.readAsDataURL(blob);
+            setProductData(data.body);
+          }
         })
         .catch(() => {
           setErrorMsg('Product details not available!');
@@ -25,20 +38,56 @@ const ProductPage = () => {
 
   const handleImageClick = () => {
     if (productData && productData.productImage) {
-      //   const objectUrl = URL.createObjectURL(productData.productImage); // Create an object URL for the file
-      window.open(productData.productImage, '_self'); // Open the object URL in a new tab
-      // ); // Revoke the URL after it's opened (optional cleanup)
+      setIsImageClicked(true);
     }
   };
 
   const handleVideoClick = () => {
     if (productData && productData.productVideo) {
-      window.open(productData.productVideo, '_self');
+      setIsVideoClicked(true);
     }
+  };
+
+  const handleBack = () => {
+    setIsImageClicked(null);
+    setIsVideoClicked(null);
   };
 
   return errorMsg ? (
     <div>{errorMsg} </div>
+  ) : isImageClicked || isVideoClicked ? (
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100vh',
+        gap: '20px',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          paddingLeft: '10px',
+          paddingTop: '10px',
+        }}
+      >
+        <button
+          type="button"
+          class="btn btn-primary"
+          style={{ width: '100px' }}
+          onClick={handleBack}
+        >
+          Back
+        </button>
+      </div>
+
+      {isImageClicked ? (
+        <img src={localImage || productData.productImage} alt="productImage" />
+      ) : (
+        <video controls src={productData.productVideo} autoPlay />
+      )}
+    </div>
   ) : (
     <div
       style={{
