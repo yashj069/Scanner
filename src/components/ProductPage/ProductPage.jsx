@@ -86,7 +86,6 @@ const ProductPage = () => {
         <img
           src={productData.productImage}
           alt="productImage"
-          crossOrigin="anonymous"
           style={{
             maxWidth: '500px',
             maxHeight: '500px',
