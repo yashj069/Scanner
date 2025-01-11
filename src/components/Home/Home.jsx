@@ -10,6 +10,7 @@ const Home = () => {
   const [showDownload, setShowDownload] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [qrImage, setQrImage] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const isTabletOrMobile = useMediaQuery({ query: '(max-width: 1000px)' });
@@ -36,13 +37,14 @@ const Home = () => {
     postData.append('productName', name);
     image && postData.append('image', image);
     video && postData.append('video', video);
-
+    setLoading(true);
     fetch(`https://guddi-garments.onrender.com/api/product/create`, {
       method: 'POST',
       body: postData,
     })
       .then((res) => res.json())
       .then((data) => {
+        setLoading(false);
         if (data.productQr) {
           setQrImage(data.productQr);
           setShowDownload(true);
@@ -166,6 +168,8 @@ const Home = () => {
           >
             Download QR
           </button>
+        ) : loading ? (
+          <div class="spinner-border text-primary" role="status"></div>
         ) : (
           <button
             type="button"

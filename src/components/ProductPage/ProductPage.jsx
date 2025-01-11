@@ -5,7 +5,7 @@ const ProductPage = () => {
   const { productId } = useParams();
   const [errorMsg, setErrorMsg] = useState(null);
   const [productData, setProductData] = useState(null);
-  const [localImage, setLocalImage] = useState(null);
+  // const [localImage, setLocalImage] = useState(null);
   const [isImageClicked, setIsImageClicked] = useState(null);
   const [isVideoClicked, setIsVideoClicked] = useState(null);
 
@@ -19,15 +19,15 @@ const ProductPage = () => {
           if (data.message) {
             setErrorMsg('Product details not available!');
           } else {
-            const response = await fetch(data.body.productImage);
-            const blob = await response.blob();
-            // Convert Blob to Base64
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              setLocalImage(reader.result); // Base64 string
-            };
-            reader.readAsDataURL(blob);
             setProductData(data.body);
+            // const response = await fetch(data.body.productImage);
+            // const blob = await response.blob();
+            // // Convert Blob to Base64
+            // const reader = new FileReader();
+            // reader.onloadend = () => {
+            //   setLocalImage(reader.result); // Base64 string
+            // };
+            // reader.readAsDataURL(blob);
           }
         })
         .catch(() => {
@@ -83,9 +83,29 @@ const ProductPage = () => {
       </div>
 
       {isImageClicked ? (
-        <img src={localImage || productData.productImage} alt="productImage" />
+        <img
+          src={productData.productImage}
+          alt="productImage"
+          crossOrigin="anonymous"
+          style={{
+            maxWidth: '500px',
+            maxHeight: '500px',
+            objectFit: 'contain',
+            margin: 'auto',
+          }}
+        />
       ) : (
-        <video controls src={productData.productVideo} autoPlay />
+        <video
+          controls
+          src={productData.productVideo}
+          autoPlay
+          style={{
+            maxWidth: '500px',
+            maxHeight: '500px',
+            objectFit: 'contain',
+            margin: 'auto',
+          }}
+        />
       )}
     </div>
   ) : (
