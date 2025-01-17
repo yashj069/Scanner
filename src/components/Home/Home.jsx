@@ -67,7 +67,7 @@ const Home = () => {
 
       // Create a download link programmatically
       const link = document.createElement('a');
-      link.href = url;
+      link.href = isTabletOrMobile ? imageUrl : url;
       link.download = filename;
 
       // Mobile compatibility: Add to the document before clicking
@@ -78,11 +78,11 @@ const Home = () => {
 
       // Cleanup: Remove link and revoke URL
       document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      URL.revokeObjectURL(isTabletOrMobile ? imageUrl : url);
     } catch (error) {
       console.error('Error downloading the image:', error);
-      window.open(imageUrl, '_blank');
-      // alert('Failed to download the image. Please try again.');
+      // window.open(imageUrl, '_blank');
+      alert('Failed to download the image. Please try again.');
     }
   };
 
