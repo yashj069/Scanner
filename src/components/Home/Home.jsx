@@ -81,7 +81,8 @@ const Home = () => {
       URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error downloading the image:', error);
-      alert('Failed to download the image. Please try again.');
+      window.open(imageUrl, '_blank');
+      // alert('Failed to download the image. Please try again.');
     }
   };
 
