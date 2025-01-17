@@ -55,25 +55,34 @@ const Home = () => {
       });
   };
 
-  const handleDownloadImage = (imageUrl, filename) => {
-    fetch(imageUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.blob();
-      })
-      .then((blob) => {
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = filename;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-      })
-      .catch((error) => console.error('Error downloading the image:', error));
+  const handleDownloadImage = async (imageUrl, filename) => {
+    try {
+      const response = await fetch(imageUrl);
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+
+      // Create a download link programmatically
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+
+      // Mobile compatibility: Add to the document before clicking
+      document.body.appendChild(link);
+
+      // Simulate a click
+      link.click();
+
+      // Cleanup: Remove link and revoke URL
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading the image:', error);
+      alert('Failed to download the image. Please try again.');
+    }
   };
 
   return (
