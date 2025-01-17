@@ -57,32 +57,47 @@ const Home = () => {
 
   const handleDownloadImage = async (imageUrl, filename) => {
     try {
-      const response = await fetch(imageUrl);
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
+      if (isTabletOrMobile) {
+        const link = document.createElement('a');
+        link.href = imageUrl; // Directly use the image URL
+        link.download = filename; // Set the desired filename
+
+        // Append the link to the document for mobile compatibility
+        document.body.appendChild(link);
+
+        // Trigger the download
+        link.click();
+
+        // Cleanup
+        document.body.removeChild(link);
+      } else {
+        const response = await fetch(imageUrl);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+
+        // Create a download link programmatically
+        const link = document.createElement('a');
+        link.href = isTabletOrMobile ? imageUrl : url;
+        link.download = filename;
+
+        // Mobile compatibility: Add to the document before clicking
+        document.body.appendChild(link);
+
+        // Simulate a click
+        link.click();
+
+        // Cleanup: Remove link and revoke URL
+        document.body.removeChild(link);
+        URL.revokeObjectURL(isTabletOrMobile ? imageUrl : url);
       }
-
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-
-      // Create a download link programmatically
-      const link = document.createElement('a');
-      link.href = isTabletOrMobile ? imageUrl : url;
-      link.download = filename;
-
-      // Mobile compatibility: Add to the document before clicking
-      document.body.appendChild(link);
-
-      // Simulate a click
-      link.click();
-
-      // Cleanup: Remove link and revoke URL
-      document.body.removeChild(link);
-      URL.revokeObjectURL(isTabletOrMobile ? imageUrl : url);
     } catch (error) {
       console.error('Error downloading the image:', error);
-      // window.open(imageUrl, '_blank');
-      alert('Failed to download the image. Please try again.');
+      window.open(imageUrl, '_blank');
+      // alert('Failed to download the image. Please try again.');
     }
   };
 
